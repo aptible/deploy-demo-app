@@ -23,7 +23,7 @@ For users who are familiar with Enclave, and simply need a web application to ex
 
 * Create an application: `aptible apps:create $HANDLE`
 
-* Deploy the App via [Direct Docker Image Deploy](https://www.aptible.com/documentation/enclave/reference/apps/image/direct-docker-image-deploy.html) : `aptible deploy --app $HANDLE --docker-image quay.io/aptible/enclave-demo-app`
+* Deploy the App via [Direct Docker Image Deploy](https://www.aptible.com/documentation/enclave/reference/apps/image/direct-docker-image-deploy.html) : `aptible deploy --app $HANDLE --docker-image aptible/enclave-demo-app`
 
 * Create an Endpoint for the application from your Dashboard.
 
