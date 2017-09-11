@@ -24,7 +24,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'swiggityswooty'
 queue = Queue(connection=conn)
 logging.basicConfig(level=logging.DEBUG)
-db_init = False
 
 
 @app.teardown_appcontext
@@ -78,7 +77,7 @@ def check_env(envname, value=None):
         return False
 
 
-def checklist(migrations, url):
+def checklist(url):
     """ This will return the status of each item in the
     demo app setup checklist """
 
@@ -97,6 +96,12 @@ def checklist(migrations, url):
         scaled = True
     else:
         scaled = False
+
+    try:
+        read_messages('DB migration complete', 0)
+        migrations = True
+    except Exception:
+        migrations = False
 
     check("Create an application", True,
           "documentation/nclave/tutorials/demo-app.html#create-an-application")
@@ -135,14 +140,12 @@ try:
                  read_messages('Web container started', 0))
     logging.info("Most recent web container started: %s",
                  read_messages('Web container started', -1))
-    db_init = True
 
 except Exception:
-    db_init = False
     logging.error("PostgreSQL database is not initialized, did migrations run?")
 
 # Log the completeness of the guide to the console on startup:
-for step in checklist(db_init, "UNAVAILABLE"):
+for step in checklist("UNAVAILABLE"):
     if step.status:
         completeness = "Completed"
     else:
@@ -157,7 +160,7 @@ for step in checklist(db_init, "UNAVAILABLE"):
 # Handle web requests
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    status = checklist(db_init, request.url)
+    status = checklist(request.url)
     sum_complete = lambda total,s: total + 1 if (s.status) else total
     checklist_complete = reduce(sum_complete,status,0)
     form = InputForm()
@@ -168,9 +171,10 @@ def index():
             return "ERROR: not queued, Redis cannot be reached. Check your settings", 500
         return redirect('/')
 
-    if db_init:
+    try:
+        read_messages('DB migration complete', 0)
         return render_template('index.html', form=form, messages=read_messages('', 20), checklist_complete=checklist_complete, checklist_len=len(status), status=status)
-    else:
+    except Exception:
         return render_template('index.html', form=form, checklist_complete=checklist_complete, checklist_len=len(status), status=status)
 
 if __name__ == '__main__':
