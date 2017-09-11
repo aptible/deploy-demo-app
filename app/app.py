@@ -98,6 +98,12 @@ def checklist(migrations, url):
     else:
         scaled = False
 
+    try:
+        read_messages('DB migration complete', 0)
+        db_init = True
+    except Exception:
+        db_init = False
+
     check("Create an application", True,
           "documentation/nclave/tutorials/demo-app.html#create-an-application")
     check("Deploy the application", True,
