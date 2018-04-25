@@ -18,7 +18,6 @@ from models import Guidestep
 from worker import conn
 from worker import store_message
 
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'swiggityswooty'
@@ -77,6 +76,13 @@ def check_env(envname, value=None):
         return False
 
 
+def tutorial_url(ref):
+    return "{0}#{1}".format(
+        "documentation/enclave/tutorials/enclave-demo-app.html",
+        ref
+    )
+
+
 def checklist(url):
     """ This will return the status of each item in the
     demo app setup checklist """
@@ -87,15 +93,13 @@ def checklist(url):
         setup_status.append(Guidestep(desc,status,docpath))
 
     if "on-aptible.com" in url:
-        endpointtype = "Default"
+        endpoint_type = "Default"
     else:
-        endpointtype = "Custom"
+        endpoint_type = "Custom"
 
-    if check_env("APTIBLE_CONTAINER_SIZE") and \
-       (os.environ["APTIBLE_CONTAINER_SIZE"] != "1024"):
-        scaled = True
-    else:
-        scaled = False
+
+    size = os.environ.get("APTIBLE_CONTAINER_SIZE")
+    scaled = size is not None and int(size) != 1024
 
     try:
         read_messages('DB migration complete', 0)
@@ -103,20 +107,15 @@ def checklist(url):
     except Exception:
         migrations = False
 
-    check("Create an application", True,
-          "documentation/nclave/tutorials/demo-app.html#create-an-application")
-    check("Deploy the application", True,
-          "documentation/enclave/tutorials/demo-app.html#deploy-the-application")
-    check("Create an endpoint; current type: "+endpointtype, True,
-          "documentation/nclave/tutorials/demo-app.html#create-a-default-endpoint")
+    check("Create an application", True, tutorial_url("create-an-app"))
+    check("Deploy the application", True, tutorial_url("deploy-the-app"))
+    check("Create an endpoint; current type: {0}".format(endpoint_type), True, tutorial_url("create-a-default-endpoint"))
     check("Configure the DATABASE_URL environment variable", check_env("DATABASE_URL"),
-          "documentation/enclave/tutorials/demo-app.html#tell-your-application-about-the-databases")
+          tutorial_url("tell-the-application-about-your-databases"))
     check("Configure the REDIS_URL environment variable", check_env("REDIS_URL"),
-          "documentation/enclave/tutorials/demo-app.html#tell-your-application-about-the-databases")
+          tutorial_url("tell-the-application-about-your-databases"))
     check("Run database migrations", migrations,
-          "documentation/enclave/tutorials/demo-app.html#run-database-migrations")
-    # check("Automate database migrations", False,
-    #       "enclave/tutorials/faq/database-migrations.html#automating-database-migrations")
+          tutorial_url("run-database-migrations"))
     check("Advanced: Application: scale your app up or down", scaled,
           "documentation/enclave/reference/apps/scaling.html#vertical-scaling")
     check("Advanced: Endpoints: force redirection to HTTPS", check_env("FORCE_SSL","True"),
