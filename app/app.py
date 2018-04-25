@@ -118,7 +118,7 @@ def checklist(url):
           tutorial_url("run-database-migrations"))
     check("Advanced: Application: scale your app up or down", scaled,
           "documentation/enclave/reference/apps/scaling.html#vertical-scaling")
-    check("Advanced: Endpoints: force redirection to HTTPS", check_env("FORCE_SSL","True"),
+    check("Advanced: Endpoints: force redirection to HTTPS", check_env("FORCE_SSL", "true"),
           "documentation/enclave/reference/apps/endpoints/https-endpoints/https-redirect.html")
     check("Advanced: Endpoints: change default timeout", check_env("IDLE_TIMEOUT"),
           "documentation/enclave/reference/apps/endpoints/timeouts.html#endpoint-timeouts")
