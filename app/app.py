@@ -1,16 +1,16 @@
 import logging
 import os
+import signal
 
 from datetime import datetime
 from flask import Flask, redirect, request, render_template
 from flask_wtf import FlaskForm
 from functools import reduce
 from psycopg2 import OperationalError
-from redis.exceptions import ConnectionError
+from redis.exceptions import ConnectionError, TimeoutError
 from rq import Queue
 from sqlalchemy.exc import InvalidRequestError
 from wtforms import TextField, SubmitField
-# from wtforms import validators, ValidationError
 
 from databases import db_session
 from models import Message
@@ -118,7 +118,7 @@ def checklist(url):
           tutorial_url("run-database-migrations"))
     check("Advanced: Application: scale your app up or down", scaled,
           "documentation/enclave/reference/apps/scaling.html#vertical-scaling")
-    check("Advanced: Endpoints: force redirection to HTTPS", check_env("FORCE_SSL","True"),
+    check("Advanced: Endpoints: force redirection to HTTPS", check_env("FORCE_SSL", "true"),
           "documentation/enclave/reference/apps/endpoints/https-endpoints/https-redirect.html")
     check("Advanced: Endpoints: change default timeout", check_env("IDLE_TIMEOUT"),
           "documentation/enclave/reference/apps/endpoints/timeouts.html#endpoint-timeouts")
@@ -160,14 +160,28 @@ for step in checklist("UNAVAILABLE"):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     status = checklist(request.url)
-    sum_complete = lambda total,s: total + 1 if (s.status) else total
-    checklist_complete = reduce(sum_complete,status,0)
+    sum_complete = lambda total, s: total + 1 if (s.status) else total
+    checklist_complete = reduce(sum_complete, status, 0)
     form = InputForm()
     if request.method == 'POST':
         try:
+            # If the connection to Redis is set to use rediss://, but is connecting on an insecure port,
+            # the connection just hangs at SSLSocket.do_handshake().
+            # This signal/alarm will prevent the connection from hanging for more than 5 seconds. It will also
+            # prevent any enqueue messages from taking more than 5 seconds, but the messages being enqueued
+            # are small enough and happen in a small enough volume, that the alarm should never be an issue on
+            # valid enqueue actions.
+            signal.signal(signal.SIGALRM, timeout_alarm_handler)
+            signal.alarm(5)
             queue.enqueue(store_message, form.message.data, datetime.now().replace(microsecond=0))
         except ConnectionError:
             return "ERROR: not queued, Redis cannot be reached. Check your settings", 500
+        except TimeoutError:
+            return "ERROR: not queued. Connection to Redis timed out. Check your REDIS_URL setting.", 500
+        finally:
+            # Connection was either successful or unsuccessful at this point. Either way,
+            # the alarm is no longer needed, so turn it off.
+            signal.alarm(0)
         return redirect('/')
 
     try:
@@ -176,6 +190,10 @@ def index():
     except Exception:
         return render_template('index.html', form=form, checklist_complete=checklist_complete, checklist_len=len(status), status=status)
 
-if __name__ == '__main__':
 
+def timeout_alarm_handler(signum, frame):
+    raise TimeoutError
+
+
+if __name__ == '__main__':
     app.run()
