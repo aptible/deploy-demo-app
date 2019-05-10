@@ -29,7 +29,7 @@ For users who are familiar with Enclave, and simply need a web application to ex
 
 ## Copyright
 
-Copyright (c) 2017 [Aptible](https://www.aptible.com). All rights reserved.
+Copyright (c) 2019 [Aptible](https://www.aptible.com). All rights reserved.
 
 [<img src="https://avatars2.githubusercontent.com/u/1580788?v=4&s=60" />](https://github.com/UserNotFound)
 
