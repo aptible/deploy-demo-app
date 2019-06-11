@@ -1,29 +1,29 @@
 # ![](http://aptible-media-assets-manual.s3.amazonaws.com/web-horizontal-350.png)
 
-## Enclave-demo-app
+## Deploy-demo-app
 
-This application is intended to facilitate learning the features of the Aptible Enclave platform, wihtout needing to deploy _your_ application.
+This application is intended to facilitate learning the features of the Aptible Aptible Deploy platform, wihtout needing to deploy _your_ application.
 
-![](https://github.com/aptible/enclave-demo-app/blob/master/screenshots/demo.png)
+![](https://github.com/aptible/deploy-demo-app/blob/master/screenshots/demo.png)
 
 There are two way you can use this application:
 
 #### Guided experience
 
-For new users of the Enclave platform, you can deploy this application follwing step by step instructions found [here](https://www.aptible.com/documentation/enclave/tutorials/enclave-demo-app.html).
+For new users of the Aptible Deploy platform, you can deploy this application follwing step by step instructions found [here](https://www.aptible.com/documentation/deploy/tutorials/deploy-demo-app.html).
 
-This will help you deploy the app, and learn to configure additional features of the Enclave platform in a guided manner. This app even features a checklist that follows the step-by-step guide, to confirm that you have performed each step properly!
+This will help you deploy the app, and learn to configure additional features of the Aptible Deploy platform in a guided manner. This app even features a checklist that follows the step-by-step guide, to confirm that you have performed each step properly!
 
-![](https://github.com/aptible/enclave-demo-app/blob/master/screenshots/checklist.png)
+![](https://github.com/aptible/deploy-demo-app/blob/master/screenshots/checklist.png)
 
 
 #### Quick start
 
-For users who are familiar with Enclave, and simply need a web application to experiement with, these are the minimal steps needed to run this application.
+For users who are familiar with Deploy, and simply need a web application to experiement with, these are the minimal steps needed to run this application.
 
 * Create an application: `aptible apps:create $HANDLE`
 
-* Deploy the App via [Direct Docker Image Deploy](https://www.aptible.com/documentation/enclave/reference/apps/image/direct-docker-image-deploy.html) : `aptible deploy --app $HANDLE --docker-image aptible/enclave-demo-app`
+* Deploy the App via [Direct Docker Image Deploy](https://www.aptible.com/documentation/deploy/reference/apps/image/direct-docker-image-deploy.html) : `aptible deploy --app $HANDLE --docker-image aptible/deploy-demo-app`
 
 * Create an Endpoint for the application from your Dashboard.
 

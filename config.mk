@@ -1,4 +1,4 @@
 REGISTRY = quay.io
-REPOSITORY = aptible/enclave-demo-app
+REPOSITORY = aptible/deploy-demo-app
 
 PUSH_REGISTRIES = $(REGISTRY) docker.io
