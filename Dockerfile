@@ -12,6 +12,7 @@ RUN pip install -r requirements.txt
 
 # Add repo contents to image
 ADD app/ /app/
+ADD Procfile /.aptible/Procfile
 
 ENV PORT 5000
 EXPOSE 5000
