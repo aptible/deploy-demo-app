@@ -1,0 +1,2 @@
+before_release:
+  - python migrations.py
