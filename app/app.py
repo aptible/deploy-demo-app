@@ -148,7 +148,7 @@ for step in checklist("UNAVAILABLE"):
     if step.status:
         completeness = "Completed"
     else:
-        completeness = "Incompete"
+        completeness = "Incomplete"
 
     if "Create an endpoint" in step.description:
         continue
