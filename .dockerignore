@@ -1,0 +1,5 @@
+.github
+.venv
+*.egg-info
+screenshots
+.travis.yml

@@ -1,22 +1,19 @@
-# Dockerfile
-FROM python:3.5-slim
+FROM ghcr.io/multi-py/python-gunicorn:py3.10-slim-latest
 
-# Add requirements.txt ONLY, then run pip install, so that Docker cache won't
-# be invalidated when changes are made to other repo files
+# first row needed for postgres/sqlalchemy
+# second row needed for common libraries used (ex: gcc)
+RUN apt-get update && apt-get install -y \
+    libcurl4-openssl-dev libssl-dev libpq-dev postgresql-client \
+    build-essential && \
+    rm -rf /var/lib/apt/lists/*
 
-ADD requirements.txt /app/
+COPY .aptible /
+
 WORKDIR /app
-RUN pip install -r requirements.txt
+ADD pyproject.toml /app/
+ADD setup.cfg /app/
 
-# WARNING: the following is applicable only for Direct Docker Image Deployment
-# For Dockerfile (git-based) deployments, only the Procfile and .aptible.yml in the root of the repository matter
-# See https://www.aptible.com/documentation/deploy/reference/apps/services/procfiles.html#procfiles
-# and https://www.aptible.com/documentation/deploy/reference/apps/aptible-yml.html#aptible-yml
-
-ADD Procfile /.aptible/
-ADD migrations /.aptible/aptible.yml
-
-# Add repo contents to image
+RUN pip install -e .[dev]
 ADD app/ /app/
 
 ENV PORT 5000

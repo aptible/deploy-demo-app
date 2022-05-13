@@ -9,10 +9,10 @@ from databases import db_session
 from models import Message
 
 
-def store_message(text,time):
+def store_message(text, time):
     try:
-        queuedmessage = Message(text,time)
-        db_session.add(queuedmessage)
+        queued_message = Message(text, time)
+        db_session.add(queued_message)
         db_session.commit()
     except Exception:
         logging.error("Could not store message '%s', \
