@@ -16,11 +16,17 @@ test: build
 build:
 	docker build -t "$(REGISTRY)/$(REPOSITORY)" -f Dockerfile .
 
+push:
+	docker push -t "$(REGISTRY)/$(REPOSITORY)"
+
+.PHONY: test build install push .venv
+
 install: .venv
 	$(PYTHON) -m pip install -e .[dev]
 
 .venv:
 	python -m venv .venv
 
-.PHONY: test build install .venv
+.PHONY: install .venv
+
 .DEFAULT_GOAL := test
