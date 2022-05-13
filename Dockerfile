@@ -12,6 +12,7 @@ COPY .aptible /
 WORKDIR /app
 ADD pyproject.toml /app/
 ADD setup.cfg /app/
+ADD ./.aptible /.aptible
 
 RUN pip install -e .[dev]
 ADD app/ /app/
