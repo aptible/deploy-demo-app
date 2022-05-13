@@ -4,22 +4,26 @@ sudo: true
 services:
   - docker
 
-script:
-  - make build
-  - make test
-
-after_success:
-  # login to your registry
-  - docker login -u $PRIVATE_REGISTRY_USERNAME -p $PRIVATE_REGISTRY_PASSWORD
-  # push your docker image to your registry
-  - make push
-  # uses the aptible toolbelt docker image to deploy your app!
-  - docker run \
-      --rm \
-      --it \
-        quay.io/aptible/aptible-toolbelt:latest \
-        aptible deploy --environment "$APTIBLE_ENVIRONMENT" \
-          --app "$APTIBLE_APP" \
-          --docker-image "$APTIBLE_DOCKER_IMG" \
-          --private-registry-username "$PRIVATE_REGISTRY_USERNAME" \
-          --private-registry-password "$PRIVATE_REGISTRY_PASSWORD"
+jobs:
+  include:
+  - stage: build-and-test
+    script: |
+      make build
+      make test
+  - stage: push
+    if: branch = main
+    script: |
+      # login to your registry
+      docker login -u $PRIVATE_REGISTRY_USERNAME -p $PRIVATE_REGISTRY_PASSWORD
+      # push your docker image to your registry
+      make push
+      # uses the aptible toolbelt docker image to deploy your app!
+      docker run \
+        --rm \
+        --it \
+          quay.io/aptible/aptible-toolbelt:latest \
+          aptible deploy --environment "$APTIBLE_ENVIRONMENT" \
+            --app "$APTIBLE_APP" \
+            --docker-image "$APTIBLE_DOCKER_IMG" \
+            --private-registry-username "$PRIVATE_REGISTRY_USERNAME" \
+            --private-registry-password "$PRIVATE_REGISTRY_PASSWORD"
