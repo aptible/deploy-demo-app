@@ -1,0 +1,43 @@
+name: push-docker-image
+
+on:
+  push:
+    branches: [ main ]
+  release:
+    types:
+      - created
+
+jobs:
+  push-image:
+    name: Release code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Log in to Quay
+        uses: docker/login-action@v1
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+
+      - name: Extract tags for Docker images
+        id: docker-meta
+        uses: docker/metadata-action@v3
+        with:
+          images: quay.io/aptible/deploy-demo-app
+
+      - uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.APTIBLE_ROBOT_PRIVATE_SSH_KEY }}
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.docker-meta.outputs.tags }}
+          # https://github.com/marketplace/actions/webfactory-ssh-agent#using-the-dockerbuild-push-action-action
+          ssh: |
+            default=${{ env.SSH_AUTH_SOCK }}
