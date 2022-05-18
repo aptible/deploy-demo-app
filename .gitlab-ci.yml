@@ -1,0 +1,20 @@
+image: debian:latest
+
+
+git_deploy_job:
+  only:
+    - gitlab-deploy
+  before_script:
+    - apt-get update && apt-get install -y git
+    # taken from: https://docs.gitlab.com/ee/ci/ssh_keys/
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    # to save it, cat <<KEY>> | base64 and save that in secrets
+    - echo "$DEMO_APP_APTIBLE_GIT_SSH_KEY" | base64 -d | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - |
+      ssh-keyscan beta.aptible.com >> ~/.ssh/known_hosts
+      git remote add aptible git@beta.aptible.com:$DEMO_APP_APTIBLE_ENVIRONMENT/$DEMO_APP_APTIBLE_APP.git
+      git push aptible $CI_COMMIT_SHA:master

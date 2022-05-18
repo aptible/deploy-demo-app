@@ -6,24 +6,19 @@ services:
 
 jobs:
   include:
-  - stage: build-and-test
-    script: |
-      make build
-      make test
   - stage: push
-    if: branch = main
-    script: |
-      # login to your registry
-      docker login -u $PRIVATE_REGISTRY_USERNAME -p $PRIVATE_REGISTRY_PASSWORD
-      # push your docker image to your registry
-      make push
-      # uses the aptible toolbelt docker image to deploy your app!
-      docker run \
-        --rm \
-        --it \
-          quay.io/aptible/aptible-toolbelt:latest \
-          aptible deploy --environment "$APTIBLE_ENVIRONMENT" \
-            --app "$APTIBLE_APP" \
-            --docker-image "$APTIBLE_DOCKER_IMG" \
-            --private-registry-username "$PRIVATE_REGISTRY_USERNAME" \
-            --private-registry-password "$PRIVATE_REGISTRY_PASSWORD"
+    if: branch = travis-deploy
+    addons:
+      ssh_known_hosts: beta.aptible.com
+    before_script:
+      - mkdir -p ~/.ssh
+      # to save it, cat <<KEY>> | base64 and save that in secrets
+      - echo "$DEMO_APP_APTIBLE_GIT_SSH_KEY" | base64 -d > ~/.ssh/id_rsa
+      - chmod 0400 ~/.ssh/id_rsa
+      - eval "$(ssh-agent -s)"
+      - ssh-add ~/.ssh/id_rsa
+      - ssh-keyscan beta.aptible.com >> ~/.ssh/known_hosts
+
+    script:
+      - git remote add aptible git@beta.aptible.com:$DEMO_APP_APTIBLE_ENVIRONMENT/$DEMO_APP_APTIBLE_APP.git
+      - git push aptible $TRAVIS_COMMIT:master

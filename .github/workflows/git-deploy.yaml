@@ -13,10 +13,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: webfactory/ssh-agent@v0.5.4
         with:
           ssh-private-key: ${{ secrets.DEMO_APP_APTIBLE_GIT_SSH_KEY }}
       - name: Deploy to Aptible
         run: |
+          ssh-keyscan beta.aptible.com >> ~/.ssh/known_hosts
           git remote add aptible git@beta.aptible.com:${DEMO_APP_APTIBLE_ENVIRONMENT}/${DEMO_APP_APTIBLE_APP}.git
-          git push aptible master:${GITHUB_SHA}
+          git push aptible ${GITHUB_SHA}:master
