@@ -3,3 +3,5 @@
 *.egg-info
 screenshots
 .travis.yml
+.gitlab-ci.yml
+.circleci

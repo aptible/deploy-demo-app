@@ -1,4 +1,4 @@
-FROM ghcr.io/multi-py/python-gunicorn:py3.10-slim-latest
+FROM python:3-slim
 
 # first row needed for postgres/sqlalchemy
 # second row needed for common libraries used (ex: gcc)
