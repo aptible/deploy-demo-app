@@ -1,7 +1,0 @@
-[tool.isort]
-profile = "black"
-skip = [".venv"]
-src_paths = ["tests"]
-
-[tool.pytest.ini_options]
-norecursedirs = []
