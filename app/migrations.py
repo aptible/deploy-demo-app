@@ -1,9 +1,8 @@
-import datetime
+from datetime import datetime
 import logging
 import sys
 import traceback
 
-from datetime import datetime
 from databases import init_db, db_session
 from models import Message
 

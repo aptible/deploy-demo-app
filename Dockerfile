@@ -1,22 +1,22 @@
-# Dockerfile
-FROM python:3.5-slim
+FROM python:3-slim
 
-# Add requirements.txt ONLY, then run pip install, so that Docker cache won't
-# be invalidated when changes are made to other repo files
+# build-essential is needed for various python dependencies (gcc + others are in build-essential)
+# libpq-dev is needed for psycopg2 to be installed
+RUN apt-get update \
+    && apt-get install -y build-essential libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-ADD requirements.txt /app/
+# The .aptible directory contains an .aptible.yml file and a Procfile
+# 1. The .aptible.yml file has a `before_release` which runs data migrations in an isolated container before a launch
+#    Details about .aptible.yml files can be found here - https://deploy-docs.aptible.com/docs/aptible-yml
+# 2. The Procfile has two processes (a background worker and a web server).
+#    Details about Procfiles can be found here: https://deploy-docs.aptible.com/docs/defining-services#explicit-services-procfiles
+ADD ./.aptible /.aptible
+
 WORKDIR /app
+ADD requirements.txt /app/
+
 RUN pip install -r requirements.txt
-
-# WARNING: the following is applicable only for Direct Docker Image Deployment
-# For Dockerfile (git-based) deployments, only the Procfile and .aptible.yml in the root of the repository matter
-# See https://www.aptible.com/documentation/deploy/reference/apps/services/procfiles.html#procfiles
-# and https://www.aptible.com/documentation/deploy/reference/apps/aptible-yml.html#aptible-yml
-
-ADD Procfile /.aptible/
-ADD migrations /.aptible/aptible.yml
-
-# Add repo contents to image
 ADD app/ /app/
 
 ENV PORT 5000

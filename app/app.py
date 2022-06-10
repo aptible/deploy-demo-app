@@ -10,7 +10,7 @@ from psycopg2 import OperationalError
 from redis.exceptions import ConnectionError, TimeoutError
 from rq import Queue
 from sqlalchemy.exc import InvalidRequestError
-from wtforms import TextField, SubmitField
+from wtforms import SubmitField, StringField
 
 from databases import db_session
 from models import Message
@@ -33,7 +33,7 @@ def shutdown_session(exception=None):
 
 class InputForm(FlaskForm):
     """ This form is used to submit information from a webpage """
-    message = TextField("Your message")
+    message = StringField("Your message")
     submit = SubmitField("Send")
 
 
@@ -62,15 +62,15 @@ def store_direct(text):
         logging.error("Could not store message '%s', check your database settings." % text)
 
 
-def check_env(envname, value=None):
+def check_env(env_name, value=None):
     """See if an environment variable is set"""
     try:
-        os.environ[envname]
+        os.environ[env_name]
     except KeyError:
         return False
-    if value is  None:
+    if value is None:
         return True
-    elif value in os.environ[envname]:
+    elif value in os.environ[env_name]:
         return True
     else:
         return False
@@ -89,14 +89,13 @@ def checklist(url):
 
     setup_status = []
 
-    def check(desc,status,docpath):
-        setup_status.append(Guidestep(desc,status,docpath))
+    def check(desc, status, docpath):
+        setup_status.append(Guidestep(desc, status, docpath))
 
     if "on-aptible.com" in url:
         endpoint_type = "Default"
     else:
         endpoint_type = "Custom"
-
 
     size = os.environ.get("APTIBLE_CONTAINER_SIZE")
     scaled = size is not None and int(size) != 1024
@@ -109,7 +108,8 @@ def checklist(url):
 
     check("Create an application", True, tutorial_url("create-an-app"))
     check("Deploy the application", True, tutorial_url("deploy-the-app"))
-    check("Create an endpoint; current type: {0}".format(endpoint_type), True, tutorial_url("create-a-default-endpoint"))
+    check("Create an endpoint; current type: {0}".format(endpoint_type), True,
+          tutorial_url("create-a-default-endpoint"))
     check("Configure the DATABASE_URL environment variable", check_env("DATABASE_URL"),
           tutorial_url("tell-the-application-about-your-databases"))
     check("Configure the REDIS_URL environment variable", check_env("REDIS_URL"),
@@ -148,7 +148,7 @@ for step in checklist("UNAVAILABLE"):
     if step.status:
         completeness = "Completed"
     else:
-        completeness = "Incompete"
+        completeness = "Incomplete"
 
     if "Create an endpoint" in step.description:
         continue
@@ -160,7 +160,7 @@ for step in checklist("UNAVAILABLE"):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     status = checklist(request.url)
-    sum_complete = lambda total, s: total + 1 if (s.status) else total
+    sum_complete = lambda total, s: total + 1 if s.status else total
     checklist_complete = reduce(sum_complete, status, 0)
     form = InputForm()
     if request.method == 'POST':
@@ -186,12 +186,14 @@ def index():
 
     try:
         read_messages('DB migration complete', 0)
-        return render_template('index.html', form=form, messages=read_messages('', 20), checklist_complete=checklist_complete, checklist_len=len(status), status=status)
+        return render_template('index.html', form=form, messages=read_messages('', 20),
+                               checklist_complete=checklist_complete, checklist_len=len(status), status=status)
     except Exception:
-        return render_template('index.html', form=form, checklist_complete=checklist_complete, checklist_len=len(status), status=status)
+        return render_template('index.html', form=form, checklist_complete=checklist_complete,
+                               checklist_len=len(status), status=status)
 
 
-def timeout_alarm_handler(signum, frame):
+def timeout_alarm_handler(_signum, _frame):
     raise TimeoutError
 
 

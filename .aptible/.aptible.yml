@@ -1,0 +1,4 @@
+# This .aptible.yml file has a `before_release` which runs data migrations in an isolated container before a launch
+#    Details about .aptible.yml files can be found here - https://deploy-docs.aptible.com/docs/aptible-yml
+before_release:
+  - python migrations.py

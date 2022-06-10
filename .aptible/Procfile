@@ -1,0 +1,4 @@
+# The Procfile has two processes (a background worker and a web server).
+# Details about Procfiles can be found here: https://deploy-docs.aptible.com/docs/defining-services#explicit-services-procfiles
+web: exec python -m gunicorn app:app -b 0.0.0.0:$PORT --access-logfile -
+background: exec python -m worker
