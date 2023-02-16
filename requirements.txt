@@ -14,7 +14,7 @@ pyparsing==3.0.9
 redis==4.3.1
 rq==1.10.1
 SQLAlchemy==1.4.36
-Werkzeug==2.1.2
+Werkzeug==2.2.3
 wrapt==1.14.1
 WTForms==3.0.1
 zipp==3.8.0
