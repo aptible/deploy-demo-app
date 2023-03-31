@@ -11,7 +11,7 @@ MarkupSafe==2.1.1
 packaging==21.3
 psycopg2==2.9.3
 pyparsing==3.0.9
-redis==4.3.1
+redis==4.4.4
 rq==1.10.1
 SQLAlchemy==1.4.36
 Werkzeug==2.1.2
