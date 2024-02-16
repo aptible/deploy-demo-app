@@ -2,10 +2,8 @@ name: build-and-push-docker-image
 
 on:
   push:
-    branches: [ main ]
-  release:
-    types:
-      - created
+    branches: 
+      - main
 
 jobs:
   push-image:
@@ -26,6 +24,8 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: aptible/deploy-demo-app
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker images
         uses: docker/build-push-action@v2
