@@ -17,4 +17,4 @@ SQLAlchemy==1.4.36
 Werkzeug==2.3.8
 wrapt==1.14.1
 WTForms==3.0.1
-zipp==3.8.0
+zipp==3.19.1
