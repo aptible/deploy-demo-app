@@ -12,7 +12,7 @@ There are two ways you can use this application (in sections below): Guided Expe
 ### Guided experience (1)
 
 For new users of the Aptible Deploy platform, you can deploy this application following step-by-step 
-instructions found [here](https://www.aptible.com/documentation/deploy/tutorials/deploy-demo-app.html).
+instructions found [here](https://www.aptible.com/docs/getting-started/deploy-starter-template/python-flask#python-flask-demo-app).
 
 This will help you deploy the app, and learn to configure additional features of the Aptible Deploy platform 
 in a guided manner. This app even features a checklist that follows the step-by-step guide, to confirm 
