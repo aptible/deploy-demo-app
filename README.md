@@ -1,4 +1,4 @@
-# ![](https://github.com/aptible/mintlify-docs/blob/073bfba084ad9ea18217f5816568c3f832d5f0ae/logo/light.png)
+<img src="https://github.com/aptible/mintlify-docs/blob/073bfba084ad9ea18217f5816568c3f832d5f0ae/logo/light.png" height="150"/>
 
 ## deploy-demo-app
 
