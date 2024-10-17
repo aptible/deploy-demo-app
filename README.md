@@ -5,7 +5,7 @@
 This application is intended to facilitate learning the features of the Aptible Deploy platform, without
 needing to deploy _your_ application.
 
-![](https://github.com/aptible/deploy-demo-app/blob/master/screenshots/demo.png)
+![](https://github.com/aptible/deploy-demo-app/blob/main/screenshots/demo.png)
 
 There are two ways you can use this application (in sections below): Guided Experience (1) and Quickstart (2)
 
@@ -18,7 +18,7 @@ This will help you deploy the app, and learn to configure additional features of
 in a guided manner. This app even features a checklist that follows the step-by-step guide, to confirm 
 that you have performed each step properly!
 
-![](https://github.com/aptible/deploy-demo-app/blob/master/screenshots/checklist.png)
+![](https://github.com/aptible/deploy-demo-app/blob/main/screenshots/checklist.png)
 
 
 ### Quick start (2)
@@ -35,7 +35,7 @@ For users who are familiar with Deploy, and simply need a web application to exp
 git clone git@github.com:aptible/deploy-demo-app.git 
 cd deploy-demo-app 
 git remote add aptible git@beta.aptible.com:$ENVIRONMENT/$HANDLE.git 
-git push aptible master
+git push aptible main
 ```
 
 * Set the configuration for your database, force HTTPS only, and increase the scale:
@@ -53,7 +53,7 @@ aptible config:set \
 
 ## Copyright
 
-Copyright (c) 2022 [Aptible](https://www.aptible.com). All rights reserved.
+Copyright (c) 2024 [Aptible](https://www.aptible.com). All rights reserved.
 
 [<img src="https://avatars2.githubusercontent.com/u/1580788?v=4&s=60" />](https://github.com/UserNotFound)
 
