@@ -26,10 +26,12 @@ that you have performed each step properly!
 For users who are familiar with Deploy, and simply need a web application to experiment with, these
  are the minimal steps needed to run this application.
 
-* Create an application: `aptible apps:create $HANDLE`
+* Create an application
+  * via the [Aptible Dashboard here](https://app.aptible.com/create/app), or
+  * via the [Aptible CLI](https://www.aptible.com/docs/reference/aptible-cli/cli-commands/cli-apps-create): `aptible apps:create $HANDLE`
 * Deploy the App - CHOOSE ONE:
   * [Direct Docker Deploy](https://www.aptible.com/documentation/deploy/reference/apps/image/direct-docker-image-deploy.html) : `aptible deploy --app $HANDLE --docker-image aptible/deploy-demo-app`
-  * [Dockerfile Deploy](https://deploy-docs.aptible.com/docs/dockerfile-deploy-example): 
+  * [Dockerfile Deploy](https://deploy-docs.aptible.com/docs/dockerfile-deploy-example)
   
 ```shell
 git clone git@github.com:aptible/deploy-demo-app.git 
