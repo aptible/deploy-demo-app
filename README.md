@@ -27,7 +27,7 @@ For users who are familiar with Deploy, and simply need a web application to exp
  are the minimal steps needed to run this application.
 
 * Create an application
-  * via the [Aptible Dashboard here](https://app.aptible.com/create/app), or
+  * via the [Aptible Dashboard](https://app.aptible.com/apps), or
   * via the [Aptible CLI](https://www.aptible.com/docs/reference/aptible-cli/cli-commands/cli-apps-create): `aptible apps:create $HANDLE`
 * Deploy the App - CHOOSE ONE:
   * [Direct Docker Deploy](https://www.aptible.com/documentation/deploy/reference/apps/image/direct-docker-image-deploy.html) : `aptible deploy --app $HANDLE --docker-image aptible/deploy-demo-app`
