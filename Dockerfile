@@ -1,4 +1,4 @@
-FROM python:3-slim
+FROM python:3.12-slim
 
 # build-essential is needed for various python dependencies (gcc + others are in build-essential)
 # libpq-dev is needed for psycopg2 to be installed
