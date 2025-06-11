@@ -1,0 +1,59 @@
+name: Make a Preview App
+
+on:
+  pull_request:
+
+env:
+  APTIBLE_ENVIRONMENT: preview-apps
+  APTIBLE_APP_NAME: demo-pr-${{ github.event.number }}
+  CLI_URL: ${{ vars.APTIBLE_CLI_URL_UBUNTU }}
+
+jobs:
+  deploy:
+    name: Create and Deploy Preview App
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install aptible CLI
+        run: |
+          PKG="$(mktemp)"
+          curl -fsSL "$CLI_URL" > "$PKG"
+          sudo dpkg -i "$PKG"
+          rm "$PKG"
+
+          aptible login --email "${{ secrets.APTIBLE_ROBOT_USERNAME }}" --password "${{ secrets.APTIBLE_ROBOT_PASSWORD }}"
+
+      - name: Create PostgreSQL Database
+        run: |
+          PG_DATABASE_URL=$(APTIBLE_OUTPUT_FORMAT=json aptible db:create "${{ env.APTIBLE_APP_NAME }}-pg" --environment ${{ env.APTIBLE_ENVIRONMENT }} --type postgresql --version 14 | jq -r '.connection_url')
+          echo "PG_DATABASE_URL=$PG_DATABASE_URL" >> $GITHUB_ENV
+
+      - name: Create Redis Database
+        run: |
+          REDIS_DATABASE_URL=$(APTIBLE_OUTPUT_FORMAT=json aptible db:create "${{ env.APTIBLE_APP_NAME }}-redis" --environment ${{ env.APTIBLE_ENVIRONMENT }} --type redis --version 7 | jq -r '.connection_url')
+          echo "REDIS_DATABASE_URL=$REDIS_DATABASE_URL" >> $GITHUB_ENV
+
+      - name: Create and Configure App
+        run: |
+        
+          # If the create fails, assume the App already exists don't configure it
+          aptible apps:create --environment ${{ env.APTIBLE_ENVIRONMENT }} ${{ env.APTIBLE_APP_NAME }} || exit 0
+
+          # Redirect stdout of `aptible config` to /dev/null just in case it contains sensitive data
+          set -e
+          sh -c "aptible config:set --environment ${{ env.APTIBLE_ENVIRONMENT }} --app ${{ env.APTIBLE_APP_NAME }} \
+            DATABASE_URL=${{ env.PG_DATABASE_URL }} \
+            REDIS_URL=${{ env.REDIS_DATABASE_URL }} \
+            FORCE_SSL=true \
+            IDLE_TIMEOUT=90"
+
+      - name: Deploy to Aptible
+        uses: aptible/aptible-deploy-action@v4
+        with:
+          type: git
+          username: ${{ secrets.APTIBLE_ROBOT_USERNAME }}
+          password: ${{ secrets.APTIBLE_ROBOT_PASSWORD }}
+          environment: ${{ env.APTIBLE_ENVIRONMENT }}
+          app: ${{ env.APTIBLE_APP_NAME }}
