@@ -1,11 +1,11 @@
-# ![](https://www.aptible.com/static/aptible-logo-dark-f7de71beb81b1638c34f88d100804d1b.png)
+# ![](https://framerusercontent.com/images/zPgE6unsAGcnam377HJMPuSoEho.svg)
 
 ## deploy-demo-app
 
 This application is intended to facilitate learning the features of the Aptible Deploy platform, without
 needing to deploy _your_ application.
 
-![](https://github.com/aptible/deploy-demo-app/blob/master/screenshots/demo.png)
+![](https://github.com/aptible/deploy-demo-app/blob/main/screenshots/demo.png)
 
 There are two ways you can use this application (in sections below): Guided Experience (1) and Quickstart (2)
 
@@ -18,7 +18,7 @@ This will help you deploy the app, and learn to configure additional features of
 in a guided manner. This app even features a checklist that follows the step-by-step guide, to confirm 
 that you have performed each step properly!
 
-![](https://github.com/aptible/deploy-demo-app/blob/master/screenshots/checklist.png)
+![](https://github.com/aptible/deploy-demo-app/blob/main/screenshots/checklist.png)
 
 
 ### Quick start (2)
@@ -26,16 +26,18 @@ that you have performed each step properly!
 For users who are familiar with Deploy, and simply need a web application to experiment with, these
  are the minimal steps needed to run this application.
 
-* Create an application: `aptible apps:create $HANDLE`
+* Create an application
+  * via the [Aptible Dashboard](https://app.aptible.com/apps), or
+  * via the [Aptible CLI](https://www.aptible.com/docs/reference/aptible-cli/cli-commands/cli-apps-create): `aptible apps:create $HANDLE`
 * Deploy the App - CHOOSE ONE:
   * [Direct Docker Deploy](https://www.aptible.com/documentation/deploy/reference/apps/image/direct-docker-image-deploy.html) : `aptible deploy --app $HANDLE --docker-image aptible/deploy-demo-app`
-  * [Dockerfile Deploy](https://deploy-docs.aptible.com/docs/dockerfile-deploy-example): 
+  * [Dockerfile Deploy](https://deploy-docs.aptible.com/docs/dockerfile-deploy-example)
   
 ```shell
 git clone git@github.com:aptible/deploy-demo-app.git 
 cd deploy-demo-app 
 git remote add aptible git@beta.aptible.com:$ENVIRONMENT/$HANDLE.git 
-git push aptible master
+git push aptible main
 ```
 
 * Set the configuration for your database, force HTTPS only, and increase the scale:
@@ -53,7 +55,7 @@ aptible config:set \
 
 ## Copyright
 
-Copyright (c) 2022 [Aptible](https://www.aptible.com). All rights reserved.
+Copyright (c) 2024 [Aptible](https://www.aptible.com). All rights reserved.
 
 [<img src="https://avatars2.githubusercontent.com/u/1580788?v=4&s=60" />](https://github.com/UserNotFound)
 
