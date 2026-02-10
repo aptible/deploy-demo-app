@@ -1,0 +1,55 @@
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://aptible:password@pg:5432/db
+      REDIS_URL: redis://default:password@redis:6379/0
+    volumes:
+      - ./app:/app
+    command: python -m gunicorn app:app -b 0.0.0.0:8000 --access-logfile -
+    depends_on:
+      redis:
+        condition: service_started
+      pg:
+        condition: service_started
+
+  background:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://aptible:password@pg:5432/db
+      REDIS_URL: redis://default:password@redis:6379/0
+    volumes:
+      - ./app:/app
+    command: python -m worker
+    depends_on:
+      redis:
+        condition: service_started
+      pg:
+        condition: service_started
+
+  pg:
+    image: quay.io/aptible/postgresql:latest-18
+    platform: linux/amd64
+    environment:
+      USERNAME: aptible
+      PASSPHRASE: password
+      DATABASE: db
+    volumes:
+      - db-data:/var/db
+
+  redis:
+    image: quay.io/aptible/redis:latest-8.2-aof
+    platform: linux/amd64
+    environment:
+      PASSPHRASE: password
+    volumes:
+      - cache-data:/var/db
+      - cache-config:/etc/redis
+
+volumes:
+  cache-config:
+  cache-data:
+  db-data:
